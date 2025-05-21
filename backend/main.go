@@ -2,6 +2,7 @@ package main
 
 import (
 	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -58,6 +59,22 @@ func main() {
 			"message": "Cadastro realizado com sucesso!",
 			"nome":    nome,
 			"email":   email,
+		})
+	})
+	r.GET("/cadastro", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"cadastros": []gin.H{
+				{
+					"id":    1,
+					"nome":  "Usuário Teste",
+					"email": "teste@exemplo.com",
+				},
+				{
+					"id":    2,
+					"nome":  "Segundo Usuário",
+					"email": "segundo@exemplo.com",
+				},
+			},
 		})
 	})
 
