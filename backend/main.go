@@ -17,7 +17,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		// Define quais origens podem acessar sua API
 		// Aqui, apenas http://localhost:3000 (seu frontend) pode fazer requisições
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000"}, // Tente http://localhost:8080 no Postman
 
 		// Define quais métodos HTTP são permitidos
 		// GET: para obter dados
