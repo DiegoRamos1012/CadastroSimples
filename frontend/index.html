@@ -29,16 +29,24 @@
             required
           />
           <label for="senha">Senha:</label>
-          <input
-            type
-          
-          />
+          <div class="senha-container">
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              class="input-especial"
+              required
+            />
+            <button type="button" id="toggleSenha" class="toggle-senha" aria-label="Mostrar/ocultar senha">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
 
           <button type="submit" class="gradiente-animado">Cadastrar</button>
         </form>
         <div id="mensagem" class="mensagem"></div>
       </div>
     </div>
-    <script type="module" src="/src/app.ts"></script>
+    <script type="module" src="/src/components/app.ts"></script>
   </body>
 </html>

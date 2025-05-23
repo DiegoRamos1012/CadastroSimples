@@ -1,3 +1,12 @@
+// Interface que representa a resposta do backend (corresponde à struct do Go)
+
+import '@fortawesome/fontawesome-free/css/all.min.css'
+interface CadastroResponse {
+  nome: string;
+  email: string;
+  message: string;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cadastroForm") as HTMLFormElement;
   const mensagemDiv = document.getElementById("mensagem") as HTMLDivElement;
@@ -14,10 +23,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(form);
     const nome = formData.get("nome") as string;
     const email = formData.get("email") as string;
+    const senha = formData.get("senha") as string;
 
     try {
       // Enviar dados para o backend
-      const response = await fetch("http://localhost:8080/cadastro", {
+      const response = await fetch("https://localhost:8080/cadastro", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -25,21 +35,23 @@ document.addEventListener("DOMContentLoaded", () => {
         body: new URLSearchParams({
           nome,
           email,
+          senha,
         }),
       });
 
-      console.log("Status da resposta:", response.status);
-      
       if (!response.ok) {
-        throw new Error(`Erro ao enviar os dados: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Erro ao enviar os dados: ${response.status} ${response.statusText}`
+        );
       }
 
-      // Debugar o corpo da resposta
+      // Obter e processar a resposta
       const responseText = await response.text();
       console.log("Resposta do servidor:", responseText);
-      
-      // Tentar converter a resposta para JSON
-      let data;
+      console.log("JSON bruto:", responseText); // Adicione esta linha após receber a resposta
+
+      // Converter para JSON
+      let data: CadastroResponse;
       try {
         data = JSON.parse(responseText);
       } catch (jsonError) {
@@ -49,12 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log("Dados processados:", data);
 
-      // Mostrar mensagem de sucesso
+      // Mostrar mensagem de sucesso usando APENAS dados do backend
       mensagemDiv.innerHTML = `
         <div class="sucesso">
-            <p>${data.message || 'Cadastro realizado com sucesso!'}</p>
-            <p>Nome: ${data.nome || nome}</p>
-            <p>Email: ${data.email || email}</p>
+            <p>${data.message}</p>
+            <p>Nome: ${data.nome}</p>
+            <p>Email: ${data.email}</p>
+            <p>Senha: ****** (dados sensíveis)</p>
         </div>
       `;
 
@@ -67,10 +80,37 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="erro-icon">⚠️</div>
             <div class="erro-content">
                 <h4>Falha no Cadastro</h4>
-                <p>${error instanceof Error ? error.message : 'Erro ao processar o cadastro. Tente novamente.'}</p>
+                <p>${
+                  error instanceof Error
+                    ? error.message
+                    : "Erro ao processar o cadastro. Tente novamente."
+                }</p>
             </div>
         </div>
       `;
     }
   });
+
+  // Funcionalidade para mostrar/ocultar senha
+  const senhaInput = document.getElementById("senha") as HTMLInputElement;
+  const toggleSenha = document.getElementById("toggleSenha") as HTMLButtonElement;
+
+  if (toggleSenha && senhaInput) {
+    toggleSenha.addEventListener("click", () => {
+      // Alterna o tipo do input entre password e text
+      const isPassword = senhaInput.type === "password";
+      senhaInput.type = isPassword ? "text" : "password";
+      
+      // Alterna o ícone usando classes do Font Awesome
+      toggleSenha.innerHTML = isPassword 
+        ? '<i class="fa-solid fa-eye"></i>' // Olho fechado quando a senha está visível
+        : '<i class="fa-solid fa-eye-slash"></i>';      // Olho aberto quando a senha está oculta
+      
+      // Alterna a classe para mudar o estilo
+      toggleSenha.classList.toggle("visible");
+    });
+    
+    // Define o ícone inicial (olho aberto)
+    toggleSenha.innerHTML = '<i class="fas fa-eye"></i>';
+  }
 });

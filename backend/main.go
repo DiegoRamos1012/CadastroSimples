@@ -7,6 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type CadastroResponse struct {
+	// Campo Nome do tipo string que será serializado para JSON com a chave "nome"
+	Nome    string `json:"nome"` // Define o campo - Indica que armazenará texto - Instrui o serializador a usar "nome" como nome da propriedade no JSON
+	Email   string `json:"email"`
+	Message string `json:"message"`
+}
+
 // Função principal que será executada quando o programa iniciar
 func main() {
 	// Cria uma nova instância do router Gin com a configuração padrão
@@ -52,14 +59,14 @@ func main() {
 		nome := c.PostForm("nome")
 		email := c.PostForm("email")
 
-		// Responde ao cliente com os dados processados em formato JSON
-		// O código 200 indica que a requisição foi bem-sucedida
-		// gin.H é um atalho para map[string]interface{} - um mapa para construir JSON
-		c.JSON(200, gin.H{
-			"message": "Cadastro realizado com sucesso!",
-			"nome":    nome,
-			"email":   email,
-		})
+		response := CadastroResponse{
+			Nome:    nome,
+			Email:   email,
+			Message: "Cadastro realizado com sucesso!",
+		}
+
+		c.JSON(200, response)
+
 	})
 	r.GET("/cadastro", func(c *gin.Context) {
 		c.JSON(200, gin.H{
